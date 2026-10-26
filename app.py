@@ -13,7 +13,7 @@ from google.genai import types
 
 
 APP_TITLE = "SiteSense AI"
-MODEL_NAME = "gemini-2.5-flash"
+MODEL_NAME = "gemini-3.8-flash"
 
 st.set_page_config(
     page_title=APP_TITLE,
