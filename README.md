@@ -33,7 +33,7 @@ A single-project capstone prototype built with Streamlit. SiteSense AI brings to
    streamlit run app.py
    ```
 
-4. The app opens in your browser. You can use the planning and weather tools without an API key. Enter a Gemini API key in the sidebar to enable live image analysis, or set `GEMINI_API_KEY` in your environment before starting Streamlit.
+4. The app opens in your browser. You can use the planning and weather tools without an API key. Set `GEMINI_API_KEY` in your environment before starting Streamlit to enable live image analysis. The app reads keys from server-side configuration and does not display them in the UI.
 
 ## Deploy to Streamlit Community Cloud
 
@@ -45,7 +45,7 @@ A single-project capstone prototype built with Streamlit. SiteSense AI brings to
 
 ## AI and data handling
 
-The live image-analysis buttons send the selected image and task prompt to Google's Gemini API using the key supplied in the sidebar, environment, or Streamlit secrets. Do not upload images unless you are authorized to share them and have reviewed the provider's current data terms. The app does not intentionally save the image or AI report to a database; session state is used only to display the latest report while the app session is active. API usage may incur charges according to your Google account and model terms.
+The live image-analysis buttons send the selected image and task prompt to Google's Gemini API using the key supplied through the environment or Streamlit secrets. Do not upload images unless you are authorized to share them and have reviewed the provider's current data terms. The app does not intentionally save the image or AI report to a database; session state is used only to display the latest report while the app session is active. API usage may incur charges according to your Google account and model terms.
 
 ## Important limitations
 

@@ -146,25 +146,19 @@ with st.sidebar:
     st.divider()
     st.markdown("**AI connection**")
     try:
-        cloud_api_key = st.secrets.get("GEMINI_API_KEY", "")
+        cloud_api_key = str(st.secrets.get("GEMINI_API_KEY", "")).strip()
     except Exception:
         cloud_api_key = ""
-    env_api_key = os.getenv("GEMINI_API_KEY", "") or cloud_api_key
-    api_key = st.text_input(
-        "Gemini API key",
-        value=env_api_key,
-        type="password",
-        help="Optional. Read from GEMINI_API_KEY when available; otherwise enter it for this session only.",
-    )
-    if api_key.strip():
-        st.success("AI enabled for this session")
+    api_key = os.getenv("GEMINI_API_KEY", "").strip() or cloud_api_key
+    if api_key:
+        st.success("Gemini configured · live analysis available")
     else:
-        st.info("Demo mode · add a Gemini key for image analysis")
+        st.info("Demo mode · add GEMINI_API_KEY in Streamlit app Settings → Secrets")
     st.divider()
     st.markdown("**Project context**")
     project_name = st.text_input("Project name", "Northstar Commercial Build")
     project_location = st.text_input("Site location", "Pune, Maharashtra")
-    st.caption("Your entered key is used only for live AI requests and is not saved by this app.")
+    st.caption("The API key is read from server-side secrets and is never displayed in the app.")
     st.divider()
     st.caption("Capstone 1 · Multimodal Construction Intelligence Platform")
 
@@ -189,7 +183,7 @@ with overview_tab:
     metric_cols = st.columns(4)
     metric_cols[0].metric("Inspection modules", "2", "PPE + concrete cracks")
     metric_cols[1].metric("Planning tools", "2", "Cost + milestones")
-    metric_cols[2].metric("AI mode", "Live" if api_key.strip() else "Demo", "Gemini vision" if api_key.strip() else "No model calls")
+    metric_cols[2].metric("AI mode", "Live" if api_key else "Demo", "Gemini vision" if api_key else "No model calls")
     metric_cols[3].metric("Data storage", "None", "No external database")
 
     left, right = st.columns([1.15, 0.85], gap="large")
@@ -205,7 +199,7 @@ with overview_tab:
     with right:
         st.markdown("### Project snapshot")
         st.markdown(
-            f"**Project**  \n{project_name}  \n\n**Location**  \n{project_location}  \n\n**AI provider**  \n{'Gemini (' + MODEL_NAME + ')' if api_key.strip() else 'Not connected — demo mode'}"
+            f"**Project**  \n{project_name}  \n\n**Location**  \n{project_location}  \n\n**AI provider**  \n{'Gemini (' + MODEL_NAME + ')' if api_key else 'Not connected — demo mode'}"
         )
         st.markdown('<div class="small-note">Images are sent to Google Gemini only when you choose to run a live analysis. Review the provider’s data terms before uploading sensitive site images.</div>', unsafe_allow_html=True)
 
@@ -244,12 +238,12 @@ with inspection_tab:
         }
 
     if st.button("Analyze site image", type="primary", disabled=uploaded is None, key="analyze_image"):
-        if not api_key.strip():
+        if not api_key:
             st.session_state["latest_inspection"] = demo_payload
         else:
             try:
                 st.session_state["latest_inspection"] = ask_gemini(
-                    api_key.strip(), inspection_prompt, uploaded.getvalue(), uploaded.type or "image/jpeg"
+                    api_key, inspection_prompt, uploaded.getvalue(), uploaded.type or "image/jpeg"
                 )
             except Exception as exc:
                 st.session_state["latest_inspection"] = {"_error": f"Analysis failed: {exc}"}
